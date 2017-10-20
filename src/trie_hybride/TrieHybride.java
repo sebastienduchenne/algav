@@ -111,7 +111,7 @@ public class TrieHybride extends Trie implements ITrieHybride{
 				//System.out.println("ei."+l);
 				cle = l;
 				fils_centre = new TrieHybride();
-				fils_centre.addWord(word.substring(1, word.length()));
+				fils_centre.addWord(word.substring(1));
 			} else if(l < cle) {
 				//System.out.println("ee1."+l);
 				if(fils_gauche == null) {
@@ -123,7 +123,7 @@ public class TrieHybride extends Trie implements ITrieHybride{
 				if(fils_centre == null) {
 					fils_centre = new TrieHybride();
 				}
-				fils_centre.addWord(word.substring(1, word.length()));
+				fils_centre.addWord(word.substring(1));
 			} else if(l > cle) {
 				//System.out.println("ee3."+l);
 				if(fils_droit == null) {
@@ -215,7 +215,7 @@ public class TrieHybride extends Trie implements ITrieHybride{
 	
 	
 	@Override
-	public int compterMots(){
+	public int compterMots(){//OK
 		int n = 0;
 		if(this.valeur != -1) {
 			n++;
@@ -264,7 +264,7 @@ public class TrieHybride extends Trie implements ITrieHybride{
 
 
 	@Override
-	public int compterNil() {
+	public int compterNil() {//OK
 		int n = 0;
 		
 		if(this.fils_gauche == null){
@@ -290,7 +290,7 @@ public class TrieHybride extends Trie implements ITrieHybride{
 
 
 	@Override
-	public int hauteur() {
+	public int hauteur() {//OK
 		int h = 0;
 		int hd = 0;
 		int hg = 0;
@@ -339,18 +339,19 @@ public class TrieHybride extends Trie implements ITrieHybride{
 
 
 		if(c < this.cle && this.fils_gauche != null){
-			nbMot = this.fils_gauche.prefixe(word);
+			nbMot += this.fils_gauche.prefixe(word);
 		} else if(c > this.cle && this.fils_droit != null){
-			nbMot = this.fils_droit.prefixe(word);
+			nbMot += this.fils_droit.prefixe(word);
 		} else if(c == this.cle){
 			if(word.length() == 1){
 				if(this.valeur != -1){
 					nbMot++;
-				} else {
-					nbMot = this.fils_centre.compterMots();
+				}
+				if(this.fils_centre != null) {
+					nbMot += this.fils_centre.compterMots();
 				}
 			} else {
-				nbMot = this.fils_centre.prefixe(word.substring(1));
+				nbMot += this.fils_centre.prefixe(word.substring(1));
 			}
 		} else {
 			nbMot = 0;
@@ -403,21 +404,16 @@ public class TrieHybride extends Trie implements ITrieHybride{
 	}
 	
 	
+	
 	/**************************/
 	//fonctions complexes
 	/**************************/
 	
 	
+	//parcourir le PATRICIA trie et fabriquer un trie hybride pour chaque lettre
 	@Override
 	public PatriciaTrie trieHybrideToPatriciaTrie() {
-		// recuperer la liste des mots 
-		ArrayList<String> words = this.listerMots(null, null);
-		
-		// construire le PatriciaTrie a partir de cette liste
 		PatriciaTrie pt = new PatriciaTrie();
-		for(int i = 0; i < words.size(); i++){
-			pt.addWord(words.get(i));
-		}
 		
 		return pt;
 	}

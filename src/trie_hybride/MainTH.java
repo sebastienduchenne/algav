@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.sound.midi.Synthesizer;
+
 import Commun.*;
 
 public class MainTH {
@@ -14,9 +16,9 @@ public class MainTH {
 		String mots[] = null;
 		
 		
-		//mots = shakespeare();
-		mots = get_words_texte("exemple_de_base");
-		//mots = get_words_texte("comedy_errors_1000w");
+		mots = shakespeare();
+		//mots = get_words_texte("exemple_de_base.txt");
+		//mots = get_words_texte("comedy_errors_1000w.txt");
 		//mots = new String[] {"toto"};
 		
 		
@@ -24,16 +26,17 @@ public class MainTH {
 		for(int i = 0; i < mots.length; i++){ t.addWord(mots[i].trim()); }
 		
 		//afficherTrie
+		System.out.println("\n********** affichage trie *******");
 		//t.afficherTrie2("");
-		/*for(int i = 0; i < array.size(); i++){ 
-			System.out.println((array.get(i).trim()));
-		}*/
+		//for(int i = 0; i < array.size(); i++){System.out.println((array.get(i).trim()));}
+		System.out.println("\n********** fin affichage trie *******");
+		
 		
 		//affichage des mots
 		System.out.println("\n********** liste des mots *******");
 		ArrayList<String> words = new ArrayList<String>();
-		//t.listerMots(words, new String());
-		//for(int i = 0; i < words.size(); i++){ System.out.println(words.get(i)); }
+		t.listerMots(words, new String());
+		for(int i = 0; i < words.size(); i++){ System.out.println(words.get(i)); }
 		System.out.println("\n********** fin liste des mots *******");
 		
 		//nombre de nil
@@ -53,11 +56,16 @@ public class MainTH {
 		//System.out.println(t.profondeurMoyenne(null, null));
 		
 		//prefixe
-		String p = "a";
+		String p = "y";
 		System.out.println("\nnb mots avec préfixe " + p + " : " + t.prefixe(p));
 		
-		//supprimer
-		
+		//supprimer mot
+		String s = "dactylo";
+		//System.out.println("\nsuppression de '"+s+"'");
+		//System.out.println("\n********** affichage trie *******");
+		//t.afficherTrie2("");
+		//for(int i = 0; i < array.size(); i++){System.out.println((array.get(i).trim()));}
+		//System.out.println("\n********** fin affichage trie *******");
 		
 		//TH2PT
 		
@@ -73,14 +81,14 @@ public class MainTH {
 		 val(A)
 		 
 		 addWord : ok
-		 isEmpty : 
-		 rechercher : 
+		 isEmpty : ok
+		 rechercher : ca à l'air bon
 		 compterMot : ok
-		 listerMot : 
+		 listerMot : ca à l'air bon
 		 compterNil : ok
 		 hauteur : ok
 		 profondeurMoyenne : 
-		 prefixe : : presque
+		 prefixe : : ca à l'air bon
 		 supprimer : 
 		 
 		 TH2PT : 
