@@ -1,5 +1,4 @@
 exemple_de_base : 35
-etude_experimentale : 2153
 
 comedy_error_1000w : 
 comedy_error_10000w : 

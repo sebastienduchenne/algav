@@ -14,18 +14,67 @@ public class TrieHybride extends Trie implements ITrieHybride{
 	private char cle;
 	private int valeur;
 
+	private TrieHybride pere;
+	
 	private TrieHybride fils_gauche;
 	private TrieHybride fils_centre;
 	private TrieHybride fils_droit;
 	
 	
-	public TrieHybride(){
+	public TrieHybride(TrieHybride pere){
+		this.pere = pere;
 		this.valeur = -1;
 		this.cle = 0;
 	}
 	
+	
+	public void afficherTrie(){//affiche une suite de lettre
+		System.out.println("-"+this.cle);
+		
+		if(this.fils_gauche != null){
+			this.fils_gauche.afficherTrie();
+		}
+		if(this.fils_centre != null){
+			this.fils_centre.afficherTrie();
+		}
+		if(this.fils_droit != null){
+			this.fils_droit.afficherTrie();
+		}
+	}
+	
+	//affiche l'arbre verticalement
+	public void afficherTrie2(String s){
+		
+		if(this.fils_droit != null){
+			String ss = "";
+			for(int i = 0; i < s.length(); i++) {ss += "-";}
+			this.fils_droit.afficherTrie2(ss+"-");
+		}
 
-	//primitives de base
+		if(this.fils_centre != null){
+			//System.out.println("c");
+			this.fils_centre.afficherTrie2(s + this.cle);
+		} else {
+			System.out.println(s+this.cle);//-------------
+		}
+		
+		if(this.fils_gauche != null){
+			//System.out.println("**");
+			String ss = "";
+			for(int i = 0; i < s.length(); i++) {ss += "-";}
+			this.fils_gauche.afficherTrie2(ss+"-");
+		
+		}
+	}
+	
+	public int nbNoeud(){
+		return 0;
+	}
+	
+
+	/*************************/
+	// Primitives de base
+	/*************************/
 	
 	
 	public boolean isEmpty(){
@@ -36,12 +85,11 @@ public class TrieHybride extends Trie implements ITrieHybride{
 		return b;
 	}
 	
-	
-	public int nbNoeud(){
-		return 0;
+	public char val() {
+		return cle;
 	}
 	
-	
+
 	@Override
 	public TrieHybride addWord(String word){
 		//System.out.println("*" + word.charAt(0));
@@ -92,7 +140,7 @@ public class TrieHybride extends Trie implements ITrieHybride{
 			} else if(l < cle) {
 				//System.out.println("ie1."+l);
 				if(fils_gauche == null) {
-					fils_gauche = new TrieHybride();
+					fils_gauche = new TrieHybride(this);
 				}
 				fils_gauche.addWord(word);
 			} else if (l == cle && valeur == -1) {
@@ -102,7 +150,7 @@ public class TrieHybride extends Trie implements ITrieHybride{
 			} else if(l > cle) {
 				//System.out.println("ie3."+l);
 				if(fils_droit == null) {
-					fils_droit = new TrieHybride();
+					fils_droit = new TrieHybride(this);
 				}
 				fils_droit.addWord(word);
 			}
@@ -110,24 +158,24 @@ public class TrieHybride extends Trie implements ITrieHybride{
 			if(isEmpty()) {
 				//System.out.println("ei."+l);
 				cle = l;
-				fils_centre = new TrieHybride();
+				fils_centre = new TrieHybride(this);
 				fils_centre.addWord(word.substring(1));
 			} else if(l < cle) {
 				//System.out.println("ee1."+l);
 				if(fils_gauche == null) {
-					fils_gauche = new TrieHybride();
+					fils_gauche = new TrieHybride(this);
 				}
 				fils_gauche.addWord(word);
 			} else if (l == cle) {
 				//System.out.println("ee2."+l);
 				if(fils_centre == null) {
-					fils_centre = new TrieHybride();
+					fils_centre = new TrieHybride(this);
 				}
 				fils_centre.addWord(word.substring(1));
 			} else if(l > cle) {
 				//System.out.println("ee3."+l);
 				if(fils_droit == null) {
-					fils_droit = new TrieHybride();
+					fils_droit = new TrieHybride(this);
 				}
 				fils_droit.addWord(word);
 			}
@@ -136,48 +184,6 @@ public class TrieHybride extends Trie implements ITrieHybride{
 		return this;
 	}
 	
-	
-	public void afficherTrie(){//affiche une suite de lettre
-		System.out.println("-"+this.cle);
-		
-		if(this.fils_gauche != null){
-			this.fils_gauche.afficherTrie();
-		}
-		if(this.fils_centre != null){
-			this.fils_centre.afficherTrie();
-		}
-		if(this.fils_droit != null){
-			this.fils_droit.afficherTrie();
-		}
-	}
-	
-	//affiche l'arbre verticalement
-	public void afficherTrie2(String s){
-		
-		if(this.fils_droit != null){
-			String ss = "";
-			for(int i = 0; i < s.length(); i++) {ss += "-";}
-			this.fils_droit.afficherTrie2(ss+"-");
-		}
-
-		
-		if(this.fils_centre != null){
-			//System.out.println("c");
-			this.fils_centre.afficherTrie2(s + this.cle);
-		} else {
-			System.out.println(s+this.cle);//-------------
-		}
-		
-		
-		if(this.fils_gauche != null){
-			//System.out.println("**");
-			String ss = "";
-			for(int i = 0; i < s.length(); i++) {ss += "-";}
-			this.fils_gauche.afficherTrie2(ss+"-");
-		
-		}
-		
-	}
 	
 	
 	/*************************/
@@ -234,12 +240,10 @@ public class TrieHybride extends Trie implements ITrieHybride{
 		}
 		
 		return n;
-		//return nbMots;
 	}
 	
 	
-	
-	
+	@Override
 	public ArrayList<String> listerMots(ArrayList<String> words, String s){
 		if(this.fils_gauche != null){
 			this.fils_gauche.listerMots(words, s);
@@ -291,9 +295,9 @@ public class TrieHybride extends Trie implements ITrieHybride{
 
 	@Override
 	public int hauteur() {//OK
-		int h = 0;
-		int hd = 0;
-		int hg = 0;
+		int h = 0;//hauteur fils centre
+		int hd = 0;//hauteur fils droit
+		int hg = 0;//hauteur fils gauche
 		
 		if(this.fils_gauche != null){
 			hg = 1 + this.fils_gauche.hauteur();
@@ -307,7 +311,7 @@ public class TrieHybride extends Trie implements ITrieHybride{
 			hd = 1 + this.fils_droit.hauteur();
 		}
 		
-		//
+		
 		if(hg > h && hg > hd){
 			//System.out.println("hg");
 			return hg;
@@ -323,6 +327,40 @@ public class TrieHybride extends Trie implements ITrieHybride{
 
 	@Override
 	public Double profondeurMoyenne(ArrayList<Double> hauteurs, Double h) {
+		Double hauteur = new Double(h);
+		
+		if(this.getPere() == null) { // si this est racine
+			hauteurs = new ArrayList<Double>();
+			hauteur = 0.0;
+		}
+		
+		if(this.fils_gauche != null){
+			hauteur++;
+			this.fils_gauche.profondeurMoyenne(hauteurs, hauteur);
+		}
+		
+		if(this.fils_centre != null){
+			hauteur++;
+			this.fils_centre.profondeurMoyenne(hauteurs, hauteur);
+		} else {
+			hauteurs.add(hauteur);
+		}
+		
+		if(this.fils_droit != null){
+			hauteur++;
+			this.fils_droit.profondeurMoyenne(hauteurs, hauteur);
+		}
+		
+		if(this.getPere() == null) { // si this est racine
+			Double somme = 0.0;
+			for(int i = 0; i < hauteurs.size(); i++){ 
+				somme = somme + hauteurs.get(i);
+				//System.out.println(hauteurs.get(i)); 
+			}
+			Double moyenne = somme/hauteurs.size();
+			//System.out.println("somme = "+somme+" moyenne = "+moyenne);
+			return moyenne;
+		}
 		return 0.0;
 	}
 
@@ -463,11 +501,16 @@ public class TrieHybride extends Trie implements ITrieHybride{
 	}
 	
 	
-	public int getNbMots() {
-		return nbMots;
+	public TrieHybride getPere() {
+		return this.pere;
+	}
+	
+	
+	public void setPere(TrieHybride pere) {
+		this.pere = pere;
 	}
 
-
+	
 	public TrieHybride getFils_gauche() {
 		return fils_gauche;
 	}

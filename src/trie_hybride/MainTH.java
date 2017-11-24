@@ -12,14 +12,14 @@ public class MainTH {
 	
 	public static void main(String[] args) {
 		
-		TrieHybride t = new TrieHybride();
+		TrieHybride t = new TrieHybride(null);
 		String mots[] = null;
 		
 		
-		mots = shakespeare();
-		//mots = get_words_texte("exemple_de_base.txt");
+		//mots = shakespeare();
+		mots = get_words_texte("exemple_de_base.txt");
 		//mots = get_words_texte("comedy_errors_1000w.txt");
-		//mots = new String[] {"toto"};
+		//mots = new String[] {"loup", "de"};
 		
 		
 		//ajout
@@ -31,12 +31,11 @@ public class MainTH {
 		//for(int i = 0; i < array.size(); i++){System.out.println((array.get(i).trim()));}
 		System.out.println("\n********** fin affichage trie *******");
 		
-		
 		//affichage des mots
 		System.out.println("\n********** liste des mots *******");
-		ArrayList<String> words = new ArrayList<String>();
-		t.listerMots(words, new String());
-		for(int i = 0; i < words.size(); i++){ System.out.println(words.get(i)); }
+		//ArrayList<String> words = new ArrayList<String>();
+		//t.listerMots(words, new String());
+		//for(int i = 0; i < words.size(); i++){ System.out.println(words.get(i)); }
 		System.out.println("\n********** fin liste des mots *******");
 		
 		//nombre de nil
@@ -53,19 +52,20 @@ public class MainTH {
 		//System.out.println("\n'"+ rec_mot +  "' existe ? " + t.rechercher(rec_mot));
 		
 		//profondeur moyenne
-		//System.out.println(t.profondeurMoyenne(null, null));
+		System.out.println("\nprofondeur moyenne :" + t.profondeurMoyenne(null, 0.0));
 		
 		//prefixe
 		String p = "y";
-		System.out.println("\nnb mots avec préfixe " + p + " : " + t.prefixe(p));
+		//System.out.println("\nnb mots avec préfixe " + p + " : " + t.prefixe(p));
 		
 		//supprimer mot
-		String s = "dactylo";
+		String s = "de";
 		//System.out.println("\nsuppression de '"+s+"'");
-		//System.out.println("\n********** affichage trie *******");
+		//t.deleteWord(s);
+		System.out.println("\n********** affichage trie *******");
 		//t.afficherTrie2("");
 		//for(int i = 0; i < array.size(); i++){System.out.println((array.get(i).trim()));}
-		//System.out.println("\n********** fin affichage trie *******");
+		System.out.println("\n********** fin affichage trie *******");
 		
 		//TH2PT
 		
@@ -73,27 +73,30 @@ public class MainTH {
 		//addThenBalance
 		
 		
+		
 		/*
-		 prem(cle)
-		 reste(cle)
-		 car(cle, i)
-		 lgueur(cle)
-		 val(A)
+		 --primitives
 		 
-		 addWord : ok
 		 isEmpty : ok
+		 val() : ok
+		 addWord : ok
+		 
+		 --Fonctions avancées
+		 
 		 rechercher : ca à l'air bon
 		 compterMot : ok
 		 listerMot : ca à l'air bon
 		 compterNil : ok
 		 hauteur : ok
-		 profondeurMoyenne : 
+		 profondeurMoyenne : ca à l'air bon
 		 prefixe : : ca à l'air bon
 		 supprimer : 
 		 
-		 TH2PT : 
+		 --Fonctions complexes
 		 
+		 TH2PT : 
 		 addThenBalance : 
+		 
 		 */
 		
 	}
