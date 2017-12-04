@@ -27,6 +27,6 @@ public interface IFonctions {
 	
 	public int prefixe(String prefixe);
 	
-	public Trie suppression(String word);
+	public boolean suppression(String word);
 	
 }

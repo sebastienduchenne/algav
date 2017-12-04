@@ -8,11 +8,10 @@ import Commun.*;
 
 
 public class TrieHybride extends Trie implements ITrieHybride{
-
-	private static int nbMots = 0;
 	
+	private static int nbMots = 0;
 	private char cle;
-	private int valeur;
+	private boolean isFinMot;
 
 	private TrieHybride pere;
 	
@@ -23,7 +22,7 @@ public class TrieHybride extends Trie implements ITrieHybride{
 	
 	public TrieHybride(TrieHybride pere){
 		this.pere = pere;
-		this.valeur = -1;
+		this.isFinMot = false;
 		this.cle = 0;
 	}
 	
@@ -67,14 +66,10 @@ public class TrieHybride extends Trie implements ITrieHybride{
 		}
 	}
 	
-	public int nbNoeud(){
-		return 0;
-	}
-	
 
-	/*************************/
-	// Primitives de base
-	/*************************/
+	/**************************/
+	/*** Primitives de base ***/
+	/**************************/
 	
 	
 	public boolean isEmpty(){
@@ -95,60 +90,20 @@ public class TrieHybride extends Trie implements ITrieHybride{
 		//System.out.println("*" + word.charAt(0));
 		char l = word.charAt(0);
 		
-		/*
-		SI taille == 1
-			SI isEmpty
-				cle = l
-				n++
-				valeur = n
-			SI lettre < cle
-				SI gauche == null
-					gauche = new TH
-				gauche.addWord(mot)
-			SI lettre == cle && valeur != -1
-				n++
-				valeur = n
-			SI lettre > cle
-				SI droit == null
-					droit = new TH
-				droit.addWord(mot)
-		SI taille > 1
-			SI isEmpty
-				cle = l
-				centre = new TH
-				centre.addWord(mot-1)
-			SI lettre < cle
-				SI gauche == null
-					gauche = new TH
-				gauche.addWord(mot)
-			SI lettre == cle
-				SI centre == null
-					centre = new TH
-				centre.addWord(mot-1)
-			SI lettre > cle
-				SI droit == null
-					droit = new TH
-				droit.addWord(mot)
-		*/
-		
 		if(word.length() == 1) {
 			if(isEmpty()) {
 				cle = l;
-				//System.out.println("ii."+l);
 				nbMots++;
-				valeur = nbMots;
+				isFinMot = true;
 			} else if(l < cle) {
-				//System.out.println("ie1."+l);
 				if(fils_gauche == null) {
 					fils_gauche = new TrieHybride(this);
 				}
 				fils_gauche.addWord(word);
-			} else if (l == cle && valeur == -1) {
-				//System.out.println("ie2."+l);
+			} else if (l == cle && !isFinMot) {
 				nbMots++;
-				valeur = nbMots;
+				isFinMot = true;
 			} else if(l > cle) {
-				//System.out.println("ie3."+l);
 				if(fils_droit == null) {
 					fils_droit = new TrieHybride(this);
 				}
@@ -156,24 +111,20 @@ public class TrieHybride extends Trie implements ITrieHybride{
 			}
 		} else {
 			if(isEmpty()) {
-				//System.out.println("ei."+l);
 				cle = l;
 				fils_centre = new TrieHybride(this);
 				fils_centre.addWord(word.substring(1));
 			} else if(l < cle) {
-				//System.out.println("ee1."+l);
 				if(fils_gauche == null) {
 					fils_gauche = new TrieHybride(this);
 				}
 				fils_gauche.addWord(word);
 			} else if (l == cle) {
-				//System.out.println("ee2."+l);
 				if(fils_centre == null) {
 					fils_centre = new TrieHybride(this);
 				}
 				fils_centre.addWord(word.substring(1));
 			} else if(l > cle) {
-				//System.out.println("ee3."+l);
 				if(fils_droit == null) {
 					fils_droit = new TrieHybride(this);
 				}
@@ -186,9 +137,9 @@ public class TrieHybride extends Trie implements ITrieHybride{
 	
 	
 	
-	/*************************/
-	// Fonctions avancees
-	/*************************/
+	/**************************/
+	/*** Fonctions avancees ***/
+	/**************************/
 	
 	
 	@Override
@@ -207,7 +158,7 @@ public class TrieHybride extends Trie implements ITrieHybride{
 		} else if(c > this.cle && this.fils_droit != null){
 			b = this.fils_droit.rechercher(word);
 		} else if(c == this.cle) {
-			if(word.length() == 1 && this.valeur != -1){
+			if(word.length() == 1 && isFinMot){
 				b = true;
 			} else if(this.fils_centre != null){
 				b = this.fils_centre.rechercher(word.substring(1));
@@ -221,25 +172,29 @@ public class TrieHybride extends Trie implements ITrieHybride{
 	
 	
 	@Override
-	public int compterMots(){//OK
-		int n = 0;
-		if(this.valeur != -1) {
-			n++;
+	public int compterMots(){
+		if(pere != null) {
+			int n = 0;
+			if(isFinMot) {
+				n++;
+			}
+			
+			if(this.fils_gauche != null){
+				n = n + this.fils_gauche.compterMots();
+			}
+			
+			if(this.fils_centre != null){
+				n = n + this.fils_centre.compterMots();
+			}
+			
+			if(this.fils_droit != null){
+				n = n + this.fils_droit.compterMots();
+			}
+			
+			return n;
+		} else {
+			return nbMots;
 		}
-		
-		if(this.fils_gauche != null){
-			n = n + this.fils_gauche.compterMots();
-		}
-		
-		if(this.fils_centre != null){
-			n = n + this.fils_centre.compterMots();
-		}
-		
-		if(this.fils_droit != null){
-			n = n + this.fils_droit.compterMots();
-		}
-		
-		return n;
 	}
 	
 	
@@ -249,7 +204,7 @@ public class TrieHybride extends Trie implements ITrieHybride{
 			this.fils_gauche.listerMots(words, s);
 		}
 		
-		if(this.valeur != -1 && this.fils_centre != null) {
+		if(isFinMot && this.fils_centre != null) {
 			words.add(s + this.cle);
 		}
 		
@@ -268,7 +223,7 @@ public class TrieHybride extends Trie implements ITrieHybride{
 
 
 	@Override
-	public int compterNil() {//OK
+	public int compterNil() {
 		int n = 0;
 		
 		if(this.fils_gauche == null){
@@ -294,7 +249,7 @@ public class TrieHybride extends Trie implements ITrieHybride{
 
 
 	@Override
-	public int hauteur() {//OK
+	public int hauteur() {
 		int h = 0;//hauteur fils centre
 		int hd = 0;//hauteur fils droit
 		int hg = 0;//hauteur fils gauche
@@ -382,7 +337,7 @@ public class TrieHybride extends Trie implements ITrieHybride{
 			nbMot += this.fils_droit.prefixe(word);
 		} else if(c == this.cle){
 			if(word.length() == 1){
-				if(this.valeur != -1){
+				if(isFinMot){
 					nbMot++;
 				}
 				if(this.fils_centre != null) {
@@ -400,52 +355,257 @@ public class TrieHybride extends Trie implements ITrieHybride{
 
 
 	@Override
-	public Trie suppression(String word) {
-		return this;
-	}
-	
-	
-	public TrieHybride getFinMot(String word){
+	public boolean suppression(String word) {
+		if(word == null || word.equals("")) {
+			return false;
+		}
+		
 		char c;
-		TrieHybride t = null;
+		boolean b = false;
 		
 		if(word.length() > 0){
 			c = word.charAt(0);
 		} else {
-			return null;
+			return false;
 		}
 		
-		
-		//System.out.println("1 - c : " + c + " - cle : " + this.cle);
-		if(c < this.cle && this.fils_gauche != null){
-			t = this.fils_gauche.getFinMot(word);
-			//System.out.println("b:"+b);
-		} else if(c > this.cle && this.fils_droit != null){
-			//System.out.println("2 - c : " + c + " - cle : " + this.cle);
-			t = this.fils_droit.getFinMot(word);
-			//System.out.println("b:"+b);
-		} else if(c == this.cle){
-			if(word.length() == 1){
-				//System.out.println("3 - c : " + c + " - cle : " + this.cle);
-				if(this.valeur != -1 || this.valeur != -1){
-					return this;
-					//System.out.println("-");
-				}
-			} else {
-				t = this.fils_centre.getFinMot(word.substring(1));
+		if(c < cle && fils_gauche != null){
+			b = fils_gauche.suppression(word);
+		} else if(c > cle && fils_droit != null){
+			b = fils_droit.suppression(word);
+		} else if(c == cle) {
+			if(word.length() == 1 && isFinMot){///////////////////
+				System.out.println("FOUND");
+				b = deleteWord2();
+				nbMots--;
+				return true;
+			} else if(fils_centre != null){
+				b = fils_centre.suppression(word.substring(1));
 			}
 		} else {
-			t = null;
+			b = false;
 		}
 		
-		return t;
+		return b;
 	}
 	
 	
+	private void copieTH(TrieHybride th1, TrieHybride th2) {
+		th1.cle = th2.cle;
+		th1.isFinMot = th2.isFinMot;
+		th1.pere = th2.pere;
+		th1.fils_gauche = th2.fils_gauche;
+		th1.fils_centre = th2.fils_centre;
+		th1.fils_droit = th2.fils_droit;
+	}
 	
-	/**************************/
-	//fonctions complexes
-	/**************************/
+	private boolean deleteWord2() {
+		//si a un/des fils
+		if(fils_gauche != null || fils_centre != null || fils_droit != null) {
+			if(pere == null) {
+				if(fils_gauche != null && fils_centre == null && fils_droit == null) {
+					copieTH(this, fils_gauche);
+					return true;
+				} else if(fils_gauche == null && fils_centre == null && fils_droit != null) {
+					copieTH(this, fils_droit);
+					return true;
+				} else if(fils_gauche != null && fils_centre == null && fils_droit != null) {
+					copieTH(this, fils_gauche);
+					
+					TrieHybride c = fils_gauche;
+					while(c.fils_droit != null) {
+						c = c.fils_droit;
+					}
+					
+					c.fils_droit = fils_droit;
+					return true;
+				} else {
+					isFinMot = false;
+					return true;
+				}
+			} else {
+				if(fils_centre != null) {
+					isFinMot = false;
+					return true;
+				}
+				
+				if(pere.fils_gauche == this) {
+					if(fils_gauche != null && fils_centre == null && fils_droit == null) {
+						pere.fils_gauche = fils_gauche;
+						fils_gauche.pere = pere;
+						return true;
+					} else if(fils_gauche == null && fils_centre == null && fils_droit != null) {
+						pere.fils_gauche = fils_droit;
+						fils_droit.pere = pere;
+						return true;
+					} else if(fils_gauche != null && fils_centre == null && fils_droit != null) {
+						pere.fils_gauche = fils_gauche;
+						fils_gauche.pere = pere;
+						fils_gauche.fils_droit = fils_droit;
+						fils_droit.pere = fils_gauche;
+						return true;
+					} 
+				} else if(pere.fils_centre == this) {
+					if(fils_gauche != null && fils_centre == null && fils_droit == null) {
+						pere.setFils_centre(fils_gauche);
+						fils_gauche.setPere(pere);
+						return true;
+					} else if(fils_gauche == null && fils_centre == null && fils_droit != null) {
+						pere.setFils_centre(fils_droit);
+						fils_droit.setPere(pere);
+						return true;
+					} else if(fils_gauche != null && fils_centre == null && fils_droit != null) {
+						fils_gauche.setFils_droit(fils_droit);
+						pere.setFils_centre(fils_gauche);
+						fils_gauche.setPere(pere);
+						return true;
+					}
+				} else if(pere.fils_droit == this) {
+					if(fils_gauche != null && fils_centre == null && fils_droit == null) {
+						pere.fils_droit = fils_gauche;
+						fils_gauche.pere = pere;
+						return true;
+					} else if(fils_gauche == null && fils_centre == null && fils_droit != null) {
+						pere.fils_droit = fils_droit;
+						fils_droit.pere = pere;
+						return true;
+					} else if(fils_gauche != null && fils_centre == null && fils_droit != null) {
+						pere.fils_droit = fils_gauche;
+						fils_gauche.pere = pere;
+						fils_gauche.fils_droit = fils_droit;
+						fils_droit.pere = fils_gauche;
+						return true;
+					} 
+				}
+			}
+			
+		//si pas de fils
+		} else {
+			TrieHybride cr = pere;
+			if(pere == null) {
+				cr = this;
+				cr = new TrieHybride(null);
+				return true;
+			} else {
+				boolean isDeleted = false;
+				
+				while(!isDeleted) {
+					
+					if(cr.pere == null) {
+						if(!cr.isFinMot) {
+							if(cr.fils_gauche == null && cr.fils_droit == null) {
+								cr = null;
+								return true;
+							} else if(cr.fils_gauche != null && cr.fils_droit == null) {
+								cr = cr.fils_gauche;
+								cr.pere = null;
+								return true;
+							} else if(cr.fils_gauche != null && cr.fils_droit != null) {
+								TrieHybride fd = cr.fils_droit;
+								cr = cr.fils_gauche;
+								cr.pere = null;
+								
+								while(cr.fils_droit != null) {
+									cr = cr.fils_droit;
+								}
+								cr.fils_droit = fd;
+								fd.pere = cr;
+								return true;
+							} else if(cr.fils_gauche == null && cr.fils_droit != null) {
+								cr = cr.fils_droit;
+								cr.pere = null;
+								return true;
+							}
+						} else {
+							cr.fils_centre = null;
+							return true;
+						}
+					} else {//si pere != null
+						if(cr == cr.pere.fils_gauche) {
+							if(!cr.isFinMot) {
+								if(cr.fils_gauche == null && cr.fils_droit == null) {
+									cr.pere.fils_gauche = null;
+									return true;
+								} else if(cr.fils_gauche != null && cr.fils_droit == null) {
+									cr.pere.fils_gauche = cr.fils_gauche;
+									cr.fils_gauche.pere = cr.pere;
+									return true;
+								} else if(cr.fils_gauche != null && cr.fils_droit != null) {
+									cr.pere.fils_gauche = cr.fils_gauche;
+									cr.fils_gauche.pere = cr.pere;
+									cr.fils_gauche.fils_droit = cr.fils_droit;
+									cr.fils_droit.pere = cr.fils_gauche;
+									return true;
+								} else if(cr.fils_gauche == null && cr.fils_droit != null) {
+									cr.pere.fils_gauche = cr.fils_droit;
+									cr.fils_droit.pere = cr.pere;
+									return true;
+								}
+							} else {
+								cr.fils_centre = null;
+								return true;
+							}
+						} else if(cr == cr.pere.fils_centre) {
+							if(!cr.isFinMot) {
+								if(cr.fils_gauche == null && cr.fils_droit == null) {//
+									cr = cr.pere;
+									continue;
+								} else if(cr.fils_gauche != null && cr.fils_droit == null) {
+									cr.pere.fils_centre = cr.fils_gauche;
+									cr.fils_gauche.pere = cr.pere;
+									return true;
+								} else if(cr.fils_gauche != null && cr.fils_droit != null) {
+									cr.pere.fils_centre = cr.fils_gauche;
+									cr.fils_gauche.pere = cr.pere;
+									cr.fils_gauche.fils_droit = cr.fils_droit;
+									cr.fils_droit.pere = cr.fils_gauche;
+									return true;
+								} else if(cr.fils_gauche == null && cr.fils_droit != null) {
+									cr.pere.fils_centre = cr.fils_droit;
+									cr.fils_droit.pere = cr.pere;
+									return true;
+								}
+							} else {
+								cr.fils_centre = null;
+								return true;
+							}
+						} else if(cr == cr.pere.fils_droit) {
+							if(!cr.isFinMot) {
+								if(cr.fils_gauche == null && cr.fils_droit == null) {
+									cr.pere.fils_droit = null;
+									return true;
+								} else if(cr.fils_gauche != null && cr.fils_droit == null) {
+									cr.pere.fils_droit = cr.fils_gauche;
+									cr.fils_gauche.pere = cr.pere;
+									return true;
+								} else if(cr.fils_gauche != null && cr.fils_droit != null) {
+									cr.pere.fils_droit = cr.fils_gauche;
+									cr.fils_gauche.pere = cr.pere;
+									cr.fils_gauche.fils_droit = cr.fils_droit;
+									cr.fils_droit.pere = cr.fils_gauche;
+									return true;
+								} else if(cr.fils_gauche == null && cr.fils_droit != null) {
+									cr.pere.fils_droit = cr.fils_droit;
+									cr.fils_droit.pere = cr.pere;
+									return true;
+								}
+							} else {
+								cr.fils_centre = null;
+								return true;
+							}
+						}
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
+	
+	/***************************/
+	/*** fonctions complexes ***/
+	/***************************/
 	
 	
 	//parcourir le PATRICIA trie et fabriquer un trie hybride pour chaque lettre
@@ -459,7 +619,10 @@ public class TrieHybride extends Trie implements ITrieHybride{
 	
 	@Override
 	public TrieHybride addWordAndBalance(String word){
-		return null;
+		if(word != null && !word.equals("")) {
+			this.addWord(word);
+		}
+		return this;
 	}
 	
 	
@@ -470,15 +633,15 @@ public class TrieHybride extends Trie implements ITrieHybride{
 	
 	
 	@Override
-	public TrieHybride balance(){
+	public TrieHybride balance(){//voir rotation gauche/droite
 
 		return null;
 	}
 
 
-	/*
-	 * guetters, setters et autres
-	 * */
+	/***************************/
+	/*** guetters et setters ***/
+	/***************************/
 	
 
 	public char getCle() {
@@ -488,16 +651,6 @@ public class TrieHybride extends Trie implements ITrieHybride{
 
 	public void setCle(char cle) {
 		this.cle = cle;
-	}
-	
-	
-	public int getValeur() {
-		return valeur;
-	}
-
-	
-	public void setValeur(int valeur) {
-		this.valeur = valeur;
 	}
 	
 	

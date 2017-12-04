@@ -69,9 +69,9 @@ public class PatriciaTrie extends Trie implements IPatriciaTrie{
 	}
 
 	@Override
-	public Trie suppression(String word) {
+	public boolean suppression(String word) {
 		// TODO Auto-generated method stub
-		return null;
+		return false;
 	}
 
 	@Override
