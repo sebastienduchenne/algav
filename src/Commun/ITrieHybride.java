@@ -7,7 +7,7 @@ import trie_hybride.TrieHybride;
 
 public interface ITrieHybride {
 
-	public PatriciaTrie trieHybrideToPatriciaTrie();
+	public PatriciaTrie TH2PT(PatriciaTrie pt, String word);
 	
 	public TrieHybride addWordAndBalance(String word);
 	

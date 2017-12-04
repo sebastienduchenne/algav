@@ -606,8 +606,29 @@ public class TrieHybride extends Trie implements ITrieHybride{
 	
 	//parcourir le PATRICIA trie et fabriquer un trie hybride pour chaque lettre
 	@Override
-	public PatriciaTrie trieHybrideToPatriciaTrie() {
-		PatriciaTrie pt = new PatriciaTrie();
+	public PatriciaTrie TH2PT(PatriciaTrie pt, String word) {
+		if(pt == null) {
+			pt = new PatriciaTrie();
+			word = "";
+		}
+		
+		if(this.fils_gauche != null){
+			this.fils_gauche.TH2PT(pt, word);
+		}
+		
+		if(isFinMot && this.fils_centre != null) {
+			pt.addWord(word + this.cle);
+		}
+		
+		if(this.fils_centre != null){
+			this.fils_centre.TH2PT(pt, word + this.cle);
+		} else {
+			pt.addWord(word + this.cle);
+		}
+		
+		if(this.fils_droit != null){
+			this.fils_droit.TH2PT(pt, word);
+		}
 		
 		return pt;
 	}

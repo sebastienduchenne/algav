@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import Commun.*;
+import patricia_trie.PatriciaTrie;
 
 public class MainTH {
 	
@@ -73,11 +74,15 @@ public class MainTH {
 //		System.out.println("\nnb mots APRES : " + t.compterMots());
 		
 		/**TH2PT**/
-		
+		PatriciaTrie pt = t.TH2PT(null, null);
+		System.out.println("\n********** affichage trie *******");
+		ArrayList<String> wordsPT = new ArrayList<String>();
+		pt.listerMots(wordsPT, new String());
+		System.out.println("\n********** fin affichage trie *******");
 		
 		/**addThenBalance**/
-		
-		
+		//String w = "toto";
+		//t.addWordAndBalance(w);
 		
 		/*
 		 --primitives
@@ -99,7 +104,7 @@ public class MainTH {
 		 
 		 --Fonctions complexes
 		 
-		 TH2PT : 
+		 TH2PT : A TESTER <---------------------------------
 		 addThenBalance : 
 		 
 		 */
