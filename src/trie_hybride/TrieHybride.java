@@ -51,14 +51,12 @@ public class TrieHybride extends Trie implements ITrieHybride{
 		}
 
 		if(this.fils_centre != null){
-			//System.out.println("c");
 			this.fils_centre.afficherTrie2(s + this.cle);
 		} else {
 			System.out.println(s+this.cle);//-------------
 		}
 		
 		if(this.fils_gauche != null){
-			//System.out.println("**");
 			String ss = "";
 			for(int i = 0; i < s.length(); i++) {ss += "-";}
 			this.fils_gauche.afficherTrie2(ss+"-");
@@ -87,7 +85,6 @@ public class TrieHybride extends Trie implements ITrieHybride{
 
 	@Override
 	public TrieHybride addWord(String word){
-		//System.out.println("*" + word.charAt(0));
 		char l = word.charAt(0);
 		
 		if(word.length() == 1) {
@@ -268,13 +265,10 @@ public class TrieHybride extends Trie implements ITrieHybride{
 		
 		
 		if(hg > h && hg > hd){
-			//System.out.println("hg");
 			return hg;
 		} else if(hd > h && hd > hg){
-			//System.out.println("hd");
 			return hd;
 		} else {
-			//System.out.println("h");
 			return h;
 		}
 	}
@@ -310,10 +304,8 @@ public class TrieHybride extends Trie implements ITrieHybride{
 			Double somme = 0.0;
 			for(int i = 0; i < hauteurs.size(); i++){ 
 				somme = somme + hauteurs.get(i);
-				//System.out.println(hauteurs.get(i)); 
 			}
 			Double moyenne = somme/hauteurs.size();
-			//System.out.println("somme = "+somme+" moyenne = "+moyenne);
 			return moyenne;
 		}
 		return 0.0;
@@ -374,11 +366,15 @@ public class TrieHybride extends Trie implements ITrieHybride{
 		} else if(c > cle && fils_droit != null){
 			b = fils_droit.suppression(word);
 		} else if(c == cle) {
-			if(word.length() == 1 && isFinMot){///////////////////
+			if(word.length() == 1 && isFinMot){
 				System.out.println("FOUND");
-				b = deleteWord2();
-				nbMots--;
-				return true;
+				b = deleteWord();
+				if(b) {
+					nbMots--;
+					return true;
+				} else {
+					return false;
+				}
 			} else if(fils_centre != null){
 				b = fils_centre.suppression(word.substring(1));
 			}
@@ -399,7 +395,7 @@ public class TrieHybride extends Trie implements ITrieHybride{
 		th1.fils_droit = th2.fils_droit;
 	}
 	
-	private boolean deleteWord2() {
+	private boolean deleteWord() {
 		//si a un/des fils
 		if(fils_gauche != null || fils_centre != null || fils_droit != null) {
 			if(pere == null) {
